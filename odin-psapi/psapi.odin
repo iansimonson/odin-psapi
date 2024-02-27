@@ -124,11 +124,13 @@ PENUM_PAGE_FILE_INFORMATION :: ^ENUM_PAGE_FILE_INFORMATION
 PENUM_PAGE_FILE_CALLBACKW :: #type proc "system" (pContext: LPVOID, pPageFileInfo: PENUM_PAGE_FILE_INFORMATION, lpFilename: LPCWSTR) -> BOOL
 PENUM_PAGE_FILE_CALLBACKA :: #type proc "system" (pContext: LPVOID, pPageFileInfo: PENUM_PAGE_FILE_INFORMATION, lpFilename: LPCSTR) -> BOOL
 
+when PSAPI_VERSION > 1 {
 @(default_calling_convention = "system", link_prefix="K32")
 foreign psapi {
     EnumProcesses :: proc(lpidProcess: ^DWORD, cb: DWORD, cbNeeded: LPDWORD) -> BOOL ---
     EnumProcessModules :: proc(hProcess: HANDLE, lphModule: ^HMODULE, cb: DWORD, lpcbNeeded: LPDWORD) -> BOOL ---
     EnumProcessModulesEx :: proc(hProcess: HANDLE, lphModule: ^HMODULE, cb: DWORD, lpcbNeeded: LPDWORD, dwFilterFlag: DWORD) -> BOOL ---
+
     GetModuleBaseNameA :: proc(hProcess: HANDLE, hModule: HMODULE, lpBaseName: LPSTR, nSize: DWORD) -> DWORD ---
     GetModuleBaseNameW :: proc(hProcess: HANDLE, hModule: HMODULE, lpBaseName: LPWSTR, nSize: DWORD) -> DWORD ---
     GetModuleFileNameExA :: proc(hProcess: HANDLE, hModule: HMODULE, lpFilename: LPSTR, nSize: DWORD) -> DWORD ---
@@ -162,4 +164,53 @@ foreign psapi {
 
     GetProcessImageFileNameA :: proc(hProcess: HANDLE, lpImageFileName: LPSTR, nSize: DWORD) -> DWORD ---
     GetProcessImageFileNameW :: proc(hProcess: HANDLE, lpImageFileName: LPWSTR, nSize: DWORD) -> DWORD ---
+}
+
+} else when PSAPI_VERSION == 1 {
+
+@(default_calling_convention = "system")
+foreign psapi {
+    EnumProcesses :: proc(lpidProcess: ^DWORD, cb: DWORD, cbNeeded: LPDWORD) -> BOOL ---
+    EnumProcessModules :: proc(hProcess: HANDLE, lphModule: ^HMODULE, cb: DWORD, lpcbNeeded: LPDWORD) -> BOOL ---
+    EnumProcessModulesEx :: proc(hProcess: HANDLE, lphModule: ^HMODULE, cb: DWORD, lpcbNeeded: LPDWORD, dwFilterFlag: DWORD) -> BOOL ---
+
+    GetModuleBaseNameA :: proc(hProcess: HANDLE, hModule: HMODULE, lpBaseName: LPSTR, nSize: DWORD) -> DWORD ---
+    GetModuleBaseNameW :: proc(hProcess: HANDLE, hModule: HMODULE, lpBaseName: LPWSTR, nSize: DWORD) -> DWORD ---
+    GetModuleFileNameExA :: proc(hProcess: HANDLE, hModule: HMODULE, lpFilename: LPSTR, nSize: DWORD) -> DWORD ---
+    GetModuleFileNameExW :: proc(hProcess: HANDLE, hModule: HMODULE, lpFilename: LPWSTR, nSize: DWORD) -> DWORD ---
+
+    @(link_prefix = "K32")
+    GetModuleInformation :: proc(hProcess: HANDLE, hModule: HMODULE, lpmodinfo: LPMODULEINFO, cb: DWORD) -> BOOL ---
+
+    @(link_prefix = "K32")
+    EmptyWorkingSet :: proc(hProcess: HANDLE) -> BOOL ---
+
+    QueryWorkingSet :: proc(hProcess: HANDLE, pv: PVOID, cb: DWORD) -> BOOL ---
+    QueryWorkingSetEx :: proc(hProcess: HANDLE, pv: PVOID, cb: DWORD) -> BOOL ---
+
+    InitializeProcessForWsWatch :: proc(hProcess: HANDLE) -> BOOL ---
+
+    GetWsChanges :: proc(hProcess: HANDLE, lpWatchInfo: PPSAPI_WS_WATCH_INFORMATION, cb: DWORD) -> BOOL ---
+    GetWsChangesEx :: proc(hProcess: HANDLE, lpWatchInfoEx: PPSAPI_WS_WATCH_INFORMATION_EX, cb: DWORD) -> BOOL ---
+
+    GetMappedFileNameW :: proc(hProcess: HANDLE, lpv: LPVOID, lpFilename: LPWSTR, nSize: DWORD) -> DWORD ---
+    GetMappedFileNameA :: proc(hProcess: HANDLE, lpv: LPVOID, lpFilename: LPSTR, nSize: DWORD) -> DWORD ---
+
+    EnumDeviceDrivers :: proc(lpImageBase: ^LPVOID, cb: DWORD, lpcbNeeded: LPDWORD) -> BOOL ---
+    GetDeviceDriverBaseNameA :: proc(lpImageBase: LPVOID, lpFilename: LPSTR, nSize: DWORD) -> DWORD ---
+    GetDeviceDriverBaseNameW :: proc(lpImageBase: LPVOID, lpBaseName: LPWSTR, nSize: DWORD) -> DWORD ---
+    GetDeviceDriverFileNameA :: proc(lpImageBase: LPVOID, lpFilename: LPSTR, nSize: DWORD) -> DWORD ---
+    GetDeviceDriverFileNameW :: proc(lpImageBase: LPVOID, lpFilename: LPWSTR, nSize: DWORD) -> DWORD ---
+
+    GetProcessMemoryInfo :: proc(Process: HANDLE, ppsmemCounters: ^PROCESS_MEMORY_COUNTERS, cb: DWORD) -> BOOL ---
+
+    GetPerformanceInfo :: proc(pPerformanceInformation: PPERFORMANCE_INFORMATION, cb: DWORD) -> BOOL ---
+
+    EnumPageFilesW :: proc(pCallbackRoutine: PENUM_PAGE_FILE_CALLBACKW, pContext: LPVOID) -> BOOL ---
+    EnumPageFilesA :: proc(pCallbackRoutine: PENUM_PAGE_FILE_CALLBACKA, pContext: LPVOID) -> BOOL ---
+
+    GetProcessImageFileNameA :: proc(hProcess: HANDLE, lpImageFileName: LPSTR, nSize: DWORD) -> DWORD ---
+    GetProcessImageFileNameW :: proc(hProcess: HANDLE, lpImageFileName: LPWSTR, nSize: DWORD) -> DWORD ---
+}
+
 }
