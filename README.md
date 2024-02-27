@@ -10,7 +10,7 @@ Most of these can just be brought into `core:sys/windows` in the future as psapi
 You can just drop the `odin-psapi` directory into your
 project (or shared) and import via `import psapi "odin-psapi"` (or `import psapi "shared:odin-psapi"`)
 
-If you want to keep the entire git repo then just import via `import "odin-psapi/odin-psapi"`
+If you want to keep the entire git repo then git clone it into your project and import via `import "odin-psapi/odin-psapi"`
 
 **NOTE:** You will have to import / define some values from `winnt.h` to get the most out of
 these bindings. These are not in `core:sys/windows` either at the moment but for example to
