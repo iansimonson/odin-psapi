@@ -8,7 +8,7 @@ PSAPI_VERSION :: #config(PSAPI_VERSION, 2)
 when PSAPI_VERSION == 1 {
     foreign import psapi "system:psapi.lib"
 } else {
-    #static_assert(PSAPI_VERSION == 2)
+    #assert(PSAPI_VERSION == 2)
     foreign import psapi "system:Kernel32.lib"
 }
 
@@ -20,8 +20,15 @@ LPDWORD :: windows.LPDWORD
 SIZE_T :: windows.SIZE_T
 
 LPWSTR :: windows.LPWSTR
+LPCWSTR :: windows.LPCWSTR
+LPSTR :: windows.LPSTR
+LPCSTR :: windows.LPCSTR
 
 ULONG_PTR :: windows.ULONG_PTR
+LPVOID :: windows.LPVOID
+PVOID :: windows.PVOID
+
+HMODULE :: windows.HMODULE
 
 
 PROCESS_QUERY_INFORMATION : DWORD : 0x0400
@@ -135,7 +142,7 @@ foreign psapi {
     InitializeProcessForWsWatch :: proc(hProcess: HANDLE) -> BOOL ---
 
     GetWsChanges :: proc(hProcess: HANDLE, lpWatchInfo: PPSAPI_WS_WATCH_INFORMATION, cb: DWORD) -> BOOL ---
-    GetWsChanges :: proc(hProcess: HANDLE, lpWatchInfoEx: PPSAPI_WS_WATCH_INFORMATION_EX, cb: DWORD) -> BOOL ---
+    GetWsChangesEx :: proc(hProcess: HANDLE, lpWatchInfoEx: PPSAPI_WS_WATCH_INFORMATION_EX, cb: DWORD) -> BOOL ---
 
     GetMappedFileNameW :: proc(hProcess: HANDLE, lpv: LPVOID, lpFilename: LPWSTR, nSize: DWORD) -> DWORD ---
     GetMappedFileNameA :: proc(hProcess: HANDLE, lpv: LPVOID, lpFilename: LPSTR, nSize: DWORD) -> DWORD ---
